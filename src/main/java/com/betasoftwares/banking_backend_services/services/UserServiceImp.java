@@ -55,8 +55,8 @@ import java.math.BigDecimal;
                 .recipient(savedUser.getEmail())
                 .subject("ACCOUNT CREATION")
                 .messageBody("Congratulations your account has been successfully created\n" +
-                                "Account Details:\n Account Name: " + savedUser.getFirstName() + " " + savedUser.getLastName() +
-                                " " +  savedUser.getLastName()+ "\nAccount Number: " + savedUser.getAccountNumber())
+                                "Account Details:\n \tAccount Name: " + savedUser.getFirstName() + " " + savedUser.getLastName() +
+                                " " +  savedUser.getOtherName()+ "\n \tAccount Number: " + savedUser.getAccountNumber())
                 .build();
         emailService.sendEmailAlert(emailDetails);
         return BankResponse.builder()
