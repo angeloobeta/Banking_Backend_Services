@@ -2,8 +2,20 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5433/banking-services-backend
     username: postgres
-    password: 
+    password:
     driver-class-name: org.postgresql.Driver
+  mail:
+    host: smtp.google.com
+    port: 587
+    username: obetabyte@gmail.com
+#    password: mjaa bocc zauu njqy
+    password: regpvghhixbvhjws
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   jpa:
 #    properties:
 #      hibernate:

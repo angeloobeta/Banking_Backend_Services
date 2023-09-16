@@ -23,8 +23,7 @@ public class AccountUtils {
         // convert currentYear and randNumber to string and concantinate them
         String year = String.valueOf(currentYear);
         String randomNumber = String.valueOf(randNumber);
-        StringBuilder  accountNumber = new StringBuilder();
-        return  accountNumber.append(year).append(randomNumber).toString();
-    };
+        return year + randomNumber;
+    }
 
 }
