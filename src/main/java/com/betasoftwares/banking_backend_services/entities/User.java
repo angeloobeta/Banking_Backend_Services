@@ -22,7 +22,7 @@ public class User {
     private String address;
     private String stateOfOrigin;
     private String gender;
-    private  String accountNumber;
+    private String accountNumber;
     private BigDecimal accountBalance;
     private String email;
     private String phoneNumber;
