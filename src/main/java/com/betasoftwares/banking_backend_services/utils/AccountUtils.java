@@ -6,8 +6,8 @@ public class AccountUtils {
 
     public  static String ACCOUNT_EXIST_CODE = "001";
     public  static String ACCOUNT_EXIST_MESSAGE = "This user already has an account created";
-    public  static String ACCOUNT_CREATION_SUCCESS = "002";
-    public  static String ACCOUNT_CREATION_MESSAGE = "Account successfully created";
+    public  static String ACCOUNT_CREATION_SUCCESS_CODE = "002";
+    public  static String ACCOUNT_CREATION_SUCCESS_MESSAGE = "Account successfully created";
     public static String ACCOUNT_DOES_NOT_EXIST_CODE = "003";
     public  static String ACCOUNT_DOES_NOT_EXIST_MESSAGE = "User with the provided information does not exist";
     public  static String ACCOUNT_FOUND_CODE = "004";

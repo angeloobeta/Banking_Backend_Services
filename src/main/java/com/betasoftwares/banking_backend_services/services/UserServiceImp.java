@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 
         /**
          * Creating an account - saving a new user to db
-         * Check if use already has an account
+         * Check if you use already has an account
          */
         if(userRepository.existsByEmail(userRequest.getEmail())){
             return BankResponse.builder()
@@ -57,8 +57,8 @@ import java.math.BigDecimal;
                 .build();
         emailService.sendEmailAlert(emailDetails);
         return BankResponse.builder()
-                .responseCode(AccountUtils.ACCOUNT_CREATION_SUCCESS)
-                .responseMessage(AccountUtils.ACCOUNT_CREATION_MESSAGE)
+                .responseCode(AccountUtils.ACCOUNT_CREATION_SUCCESS_CODE)
+                .responseMessage(AccountUtils.ACCOUNT_CREATION_SUCCESS_MESSAGE)
                 .accountInfo(AccountInfo.builder()
                         .accountCreationDate(savedUser.getCreatedAt())
                         .accountBalance(savedUser.getAccountBalance())
@@ -121,7 +121,7 @@ import java.math.BigDecimal;
         return BankResponse
                 .builder()
                 .responseCode(AccountUtils.ACCOUNT_CREDITED_CODE)
-                .responseMessage(AccountUtils.ACCOUNT_CREATION_MESSAGE)
+                .responseMessage(AccountUtils.ACCOUNT_CREATION_SUCCESS_MESSAGE)
                 .accountInfo(AccountInfo
                         .builder()
                         .accountName(foundUser.getFirstName() + " " + foundUser.getLastName() + " " + foundUser.getOtherName())
