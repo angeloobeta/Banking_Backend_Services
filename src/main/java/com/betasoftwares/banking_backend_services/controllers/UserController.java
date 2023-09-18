@@ -1,9 +1,6 @@
 package com.betasoftwares.banking_backend_services.controllers;
 
-import com.betasoftwares.banking_backend_services.dto.BankResponse;
-import com.betasoftwares.banking_backend_services.dto.CreditDebitRequest;
-import com.betasoftwares.banking_backend_services.dto.EnquiryRequest;
-import com.betasoftwares.banking_backend_services.dto.UserRequest;
+import com.betasoftwares.banking_backend_services.dto.*;
 import com.betasoftwares.banking_backend_services.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -36,5 +33,10 @@ public class UserController {
     @PostMapping("/debitAccount")
     public BankResponse debitAccount(@RequestBody CreditDebitRequest creditDebitRequest){
         return userService.debitAccount(creditDebitRequest);
+    }
+
+    @PostMapping("/transfer")
+    public BankResponse transferTranstaction(@RequestBody TransferRequest transferRequest){
+        return userService.transfer(transferRequest);
     }
 }

@@ -1,9 +1,6 @@
 package com.betasoftwares.banking_backend_services.services;
 
-import com.betasoftwares.banking_backend_services.dto.BankResponse;
-import com.betasoftwares.banking_backend_services.dto.CreditDebitRequest;
-import com.betasoftwares.banking_backend_services.dto.EnquiryRequest;
-import com.betasoftwares.banking_backend_services.dto.UserRequest;
+import com.betasoftwares.banking_backend_services.dto.*;
 import org.springframework.stereotype.Service;
 
 //@Service
@@ -14,4 +11,6 @@ public interface UserService {
 
     BankResponse creditAccount(CreditDebitRequest creditDebitRequest);
     BankResponse debitAccount(CreditDebitRequest creditDebitRequest);
+
+    BankResponse transfer(TransferRequest transferRequest);
 }

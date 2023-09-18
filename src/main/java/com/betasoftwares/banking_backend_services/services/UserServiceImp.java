@@ -172,4 +172,55 @@ import java.math.BigDecimal;
                     .build();
         }
     }
+
+    @Override
+    public BankResponse transfer(TransferRequest transferRequest) {
+        // check if the account of the
+        if(!userRepository.existsByAccountNumber(transferRequest.getDestinationAccountNumber()) || !userRepository.existsByAccountNumber(transferRequest.getSourceAccountNumber())){
+            return BankResponse
+                    .builder()
+                    .responseCode(AccountUtils.ACCOUNT_DOES_NOT_EXIST_CODE)
+                    .responseMessage(AccountUtils.ACCOUNT_DOES_NOT_EXIST_MESSAGE)
+                    .accountInfo(null)
+                    .build();
+
+        }
+        // fetch account details for the creditor
+        User sourceAccount = userRepository.findByAccountNumber(transferRequest.getSourceAccountNumber());
+        if(transferRequest.getAmount() > sourceAccount.getAccountBalance().intValue()){
+            return BankResponse
+                    .builder()
+                    .responseCode(AccountUtils.INSUFFICIENT_BALANCE_CODE)
+                    .responseMessage(AccountUtils.INSUFFICIENT_BALANCE_MESSAGE)
+                    .accountInfo(AccountInfo
+                            .builder()
+                            .accountCreationDate(sourceAccount.getCreatedAt())
+                            .accountNumber(transferRequest.getSourceAccountNumber())
+                            .accountBalance(sourceAccount.getAccountBalance())
+                            .accountName(sourceAccount.getFirstName() + " " + sourceAccount.getLastName() + " " + sourceAccount.getOtherName())
+                            .build())
+                    .build();
+        }
+        // debit the source account
+        sourceAccount.setAccountBalance(sourceAccount.getAccountBalance().subtract(BigDecimal.valueOf(transferRequest.getAmount())));
+        userRepository.save(sourceAccount);
+
+        // credit the destination account
+        User destinationAccount = userRepository.findByAccountNumber(transferRequest.getDestinationAccountNumber());
+        destinationAccount.setAccountBalance(destinationAccount.getAccountBalance().add(BigDecimal.valueOf(transferRequest.getAmount())));
+        userRepository.save(destinationAccount);
+
+        return BankResponse
+                .builder()
+                .responseCode(AccountUtils.ACCOUNT_TRANSFER_CODE)
+                .responseMessage(AccountUtils.ACCOUNT_TRANSFER_SUCCESS_MESSAGE)
+                .accountInfo(AccountInfo
+                        .builder()
+                        .accountCreationDate(sourceAccount.getCreatedAt())
+                        .accountNumber(transferRequest.getSourceAccountNumber())
+                        .accountBalance(sourceAccount.getAccountBalance())
+                        .accountName(sourceAccount.getFirstName() + " " + sourceAccount.getLastName() + " " + sourceAccount.getOtherName())
+                        .build())
+                .build();
+    }
 }
