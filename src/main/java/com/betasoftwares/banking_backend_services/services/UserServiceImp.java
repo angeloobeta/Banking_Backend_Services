@@ -205,6 +205,15 @@ import java.math.BigDecimal;
         sourceAccount.setAccountBalance(sourceAccount.getAccountBalance().subtract(BigDecimal.valueOf(transferRequest.getAmount())));
         userRepository.save(sourceAccount);
 
+        // notify the creditor via email
+        EmailDetails emailDetails = EmailDetails
+                .builder()
+                .subject(AccountUtils.ACCOUNT_DEBITED_SUCCESS_MESSAGE)
+                .recipient(sourceAccount.getEmail())
+                .messageBody(AccountUtils.ACCOUNT_DEBITED_SUCCESS_MESSAGE)
+                .build();
+        emailService.sendEmailAlert(emailDetails);
+
         // credit the destination account
         User destinationAccount = userRepository.findByAccountNumber(transferRequest.getDestinationAccountNumber());
         destinationAccount.setAccountBalance(destinationAccount.getAccountBalance().add(BigDecimal.valueOf(transferRequest.getAmount())));
