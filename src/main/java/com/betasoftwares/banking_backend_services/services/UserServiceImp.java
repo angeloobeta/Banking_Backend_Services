@@ -1,7 +1,9 @@
 package com.betasoftwares.banking_backend_services.services;
 
 import com.betasoftwares.banking_backend_services.dto.*;
+import com.betasoftwares.banking_backend_services.entities.Transaction;
 import com.betasoftwares.banking_backend_services.entities.User;
+import com.betasoftwares.banking_backend_services.repository.TransactionRepository;
 import com.betasoftwares.banking_backend_services.repository.UserRepository;
 import com.betasoftwares.banking_backend_services.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,9 @@ import java.math.BigDecimal;
 @Service public class UserServiceImp implements UserService{
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TransactionService transactionService;
 
     @Autowired
     private EmailService emailService;
@@ -118,6 +123,14 @@ import java.math.BigDecimal;
         foundUser.setAccountBalance(foundUser.getAccountBalance().add(creditDebitRequest.getAmount()));
         userRepository.save(foundUser);
 
+        // save transaction
+        TransactionDto transaction = TransactionDto.builder()
+                .amount(creditDebitRequest.getAmount())
+                .transactionType("Credit Alert")
+                .accountNumber(creditDebitRequest.getAccountNumber())
+                .build();
+        transactionService.saveTransaction(transaction);
+
         return BankResponse
                 .builder()
                 .responseCode(AccountUtils.ACCOUNT_CREDITED_CODE)
@@ -157,6 +170,14 @@ import java.math.BigDecimal;
         }else{
             foundUser.setAccountBalance(foundUser.getAccountBalance().subtract(creditDebitRequest.getAmount()));
             userRepository.save(foundUser);
+
+            // save transaction
+            TransactionDto transaction = TransactionDto.builder()
+                    .amount(creditDebitRequest.getAmount())
+                    .transactionType("Debit Alert")
+                    .accountNumber(creditDebitRequest.getAccountNumber())
+                    .build();
+            transactionService.saveTransaction(transaction);
 
             return  BankResponse
                     .builder()
@@ -206,18 +227,44 @@ import java.math.BigDecimal;
         userRepository.save(sourceAccount);
 
         // notify the creditor via email
-        EmailDetails emailDetails = EmailDetails
+        EmailDetails creditorDetails = EmailDetails
                 .builder()
-                .subject(AccountUtils.ACCOUNT_DEBITED_SUCCESS_MESSAGE)
+                .subject("Debit Alert")
                 .recipient(sourceAccount.getEmail())
-                .messageBody(AccountUtils.ACCOUNT_DEBITED_SUCCESS_MESSAGE)
+                .messageBody("You transferred the sum of :" + " " + transferRequest.getAmount() + "from your account")
                 .build();
-        emailService.sendEmailAlert(emailDetails);
+        emailService.sendEmailAlert(creditorDetails);
+
+        // save transaction
+        TransactionDto transaction = TransactionDto.builder()
+                .amount(BigDecimal.valueOf(transferRequest.getAmount()))
+                .transactionType("Debit Alert")
+                .accountNumber(transferRequest.getDestinationAccountNumber())
+                .build();
+        transactionService.saveTransaction(transaction);
 
         // credit the destination account
         User destinationAccount = userRepository.findByAccountNumber(transferRequest.getDestinationAccountNumber());
         destinationAccount.setAccountBalance(destinationAccount.getAccountBalance().add(BigDecimal.valueOf(transferRequest.getAmount())));
         userRepository.save(destinationAccount);
+
+        // notify the recipient via email
+        EmailDetails recipientDetails = EmailDetails
+                .builder()
+                .subject("Debit Alert")
+                .recipient(sourceAccount.getEmail())
+                .messageBody("The sum of : " + " " + transferRequest.getAmount() + " was transferred to your account \n" +
+                        "by " +  sourceAccount.getFirstName() + " " + sourceAccount.getLastName())
+                .build();
+        emailService.sendEmailAlert(recipientDetails);
+
+        // save transaction
+        TransactionDto transaction = TransactionDto.builder()
+                .amount(BigDecimal.valueOf(transferRequest.getAmount()))
+                .transactionType("Credit Alert")
+                .accountNumber(transferRequest.getDestinationAccountNumber())
+                .build();
+        transactionService.saveTransaction(transaction);
 
         return BankResponse
                 .builder()
