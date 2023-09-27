@@ -23,6 +23,6 @@ public class Transaction {
     private BigDecimal amount;
     private String transactionType;
     private String transactionStatus;
-    @CreationTimestamp private LocalDate createAt;
+    @CreationTimestamp private LocalDate createdAt;
     @UpdateTimestamp private LocalDate modifiedAt;
 }

@@ -4,4 +4,5 @@ import com.betasoftwares.banking_backend_services.dto.EmailDetails;
 
 public interface EmailService {
     void sendEmailAlert(EmailDetails emailDetails);
+    void sendEmailWithAttachment(EmailDetails emailDetails);
 }

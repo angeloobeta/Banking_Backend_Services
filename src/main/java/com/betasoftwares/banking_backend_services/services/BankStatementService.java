@@ -1,5 +1,6 @@
 package com.betasoftwares.banking_backend_services.services;
 
+import com.betasoftwares.banking_backend_services.dto.EmailDetails;
 import com.betasoftwares.banking_backend_services.entities.Transaction;
 import com.betasoftwares.banking_backend_services.entities.User;
 import com.betasoftwares.banking_backend_services.repository.TransactionRepository;
@@ -18,13 +19,13 @@ import java.io.OutputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.concurrent.Phaser;
 
 @Component @AllArgsConstructor
 @Slf4j
 public class BankStatementService {
     private TransactionRepository transactionRepository;
     private UserRepository userRepository;
+    private EmailService emailService;
     /*
     Retrieve all transactions for a given account number within a given a date range
     generate a pdf file of the transactions
@@ -39,8 +40,8 @@ public class BankStatementService {
        List<Transaction> transactionsList = transactionRepository.findAll(accountNumber)
                 .stream()
                 .filter( transaction -> transaction.getAccountNumber().equals(accountNumber))
-                .filter(transaction -> transaction.getCreateDate().isEqual(start))
-                .filter(transaction -> transaction.getCreateDate().isEqual(end))
+                .filter(transaction -> transaction.getCreatedAt().isEqual(start))
+                .filter(transaction -> transaction.getCreatedAt().isEqual(end))
                 .toList();
         // generate the account statement pdf report
         designStatement(transactionsList, userDetail, startDate, endDate);
@@ -136,7 +137,7 @@ public class BankStatementService {
         transactionsTable.addCell(transactionStatus);
         // populate the transaction details
         transactionsList.forEach(transaction ->{
-            transactionsTable.addCell( new Phrase(transaction.getCreateAt().toString()));
+            transactionsTable.addCell( new Phrase(transaction.getCreatedAt().toString()));
             transactionsTable.addCell(new Phrase(transaction.getTransactionType()));
             transactionsTable.addCell(new Phrase(transaction.getAccountNumber()));
             transactionsTable.addCell(new Phrase(transaction.getTransactionStatus()));});
@@ -148,6 +149,16 @@ public class BankStatementService {
 
         // close the document
         document.close();
+
+        EmailDetails emailDetails = EmailDetails.builder()
+                .subject("STATEMENT OF ACCOUNT")
+                .recipient(userDetail.getEmail())
+                .messageBody("KINDLY FIND ATTACHED YOUR ACCOUNT STATEMENT")
+                .attachment(FILE)
+                .build();
+
+        // send the attachment
+        emailService.sendEmailWithAttachment(emailDetails);
     }
 
 
