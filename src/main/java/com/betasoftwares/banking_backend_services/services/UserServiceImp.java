@@ -229,7 +229,7 @@ import java.math.BigDecimal;
         // notify the creditor via email
         EmailDetails creditorDetails = EmailDetails
                 .builder()
-                .subject("Debit Alert")
+                .subject("Credit Alert")
                 .recipient(sourceAccount.getEmail())
                 .messageBody("You transferred the sum of :" + " " + transferRequest.getAmount() + "from your account")
                 .build();
@@ -238,7 +238,7 @@ import java.math.BigDecimal;
         // save transaction
         TransactionDto transaction = TransactionDto.builder()
                 .amount(BigDecimal.valueOf(transferRequest.getAmount()))
-                .transactionType("Debit Alert")
+                .transactionType("Credit Alert")
                 .accountNumber(transferRequest.getDestinationAccountNumber())
                 .build();
         transactionService.saveTransaction(transaction);
@@ -259,12 +259,12 @@ import java.math.BigDecimal;
         emailService.sendEmailAlert(recipientDetails);
 
         // save transaction
-        TransactionDto transaction = TransactionDto.builder()
+        TransactionDto transactionDebit = TransactionDto.builder()
                 .amount(BigDecimal.valueOf(transferRequest.getAmount()))
-                .transactionType("Credit Alert")
+                .transactionType("Debit Alert")
                 .accountNumber(transferRequest.getDestinationAccountNumber())
                 .build();
-        transactionService.saveTransaction(transaction);
+        transactionService.saveTransaction(transactionDebit);
 
         return BankResponse
                 .builder()

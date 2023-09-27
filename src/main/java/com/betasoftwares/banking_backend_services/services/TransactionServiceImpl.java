@@ -6,6 +6,7 @@ import com.betasoftwares.banking_backend_services.entities.Transaction;
 import com.betasoftwares.banking_backend_services.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 public class TransactionServiceImpl implements TransactionService{
@@ -20,6 +21,7 @@ public class TransactionServiceImpl implements TransactionService{
                 .transactionType(transaction.getTransactionType())
                 .transactionStatus("Success")
                 .accountNumber(transaction.getAccountNumber())
+                .createDate(LocalDate.now())
                 .build();
         transactionRepository.save(transactionDetail);
     }
